@@ -1,0 +1,4 @@
+template_path: vpc.template
+parameters:
+  CidrRange: 10.1.0.0/24
+  VpcName: SpecDemo

@@ -1,0 +1,66 @@
+{
+    "Parameters": {
+        "Cluster": {
+            "Type": "String"
+        },
+        "NamespaceId": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "Service": {
+            "Type": "AWS::ServiceDiscovery::Service",
+            "Properties": {
+                "DnsConfig": {
+                    "DnsRecords": [
+                        {
+                            "Type": "A",
+                            "TTL": "30"
+                        }
+                    ],
+                    "NamespaceId": {
+                        "Ref": "NamespaceId"
+                    }
+                },
+                "Name": "nginx",
+                "NamespaceId": {
+                    "Ref": "NamespaceId"
+                }
+            }
+        },
+        "TD": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties": {
+                "Cpu": "128",
+                "Family": "nginx",
+                "Memory": "128",
+                "NetworkMode": "bridge",
+                "ContainerDefinitions": [
+                    {
+                        "Image": "nginx",
+                        "Name": "nginx",
+                        "PortMappings": [
+                            {
+                                "ContainerPort": 80,
+                                "HostPort": 0,
+                                "Protocol": "TCP"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        "ECSService": {
+            "Type": "AWS::ECS::Service",
+            "Properties": {
+                "Cluster": {
+                    "Ref": "Cluster"
+                },
+                "SchedulingStrategy": "DAEMON",
+                "TaskDefinition": {
+                    "Ref": "TD"
+                },
+            }
+        }
+    }
+}

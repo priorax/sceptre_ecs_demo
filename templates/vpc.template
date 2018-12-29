@@ -1,0 +1,45 @@
+{
+    "Parameters": {
+        "CidrRange": {
+            "Type": "String"
+        },
+        "VpcName": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "VPC": {
+          "Type": "AWS::EC2::VPC",
+          "Properties": {
+            "CidrBlock": {"Ref": "CidrRange"},
+            "Tags": [
+                {"Key": "Name", "Value": {"Ref": "VpcName"}}
+            ]
+          }
+        },
+
+        "Gateway": {
+          "Type": "AWS::EC2::InternetGateway",
+          "Properties": {
+            "Tags": [
+                {"Key": "Name", "Value": {"Fn::Sub": "${VpcName}-IGW"}}
+            ]
+          }
+        },
+        "AttachGateway": {
+          "Type": "AWS::EC2::VPCGatewayAttachment",
+          "Properties": {
+            "VpcId": {"Ref": "VPC"},
+            "InternetGatewayId": { "Ref": "Gateway" }
+          }
+        }
+    },
+    "Outputs": {
+        "VPC": {
+            "Value": {"Ref": "VPC"}
+        },
+        "InternetGateway": {
+            "Value": {"Ref": "Gateway"}
+        }
+    }
+}

@@ -1,0 +1,110 @@
+{
+    "Parameters": {
+        "Public1Cidr": {
+            "Type": "String"
+        },
+        "Public2Cidr": {
+            "Type": "String"
+        },
+        "VPCId": {
+            "Type": "String"
+        },
+        "InternetGateway": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "PublicSubnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": "ap-southeast-2a",
+                "VpcId": {
+                    "Ref": "VPCId"
+                },
+                "CidrBlock": {
+                    "Ref": "Public1Cidr"
+                },
+                "MapPublicIpOnLaunch": true,
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Public1"
+                    }
+                ]
+            }
+        },
+        "PublicSubnet2": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "AvailabilityZone": "ap-southeast-2b",
+                "VpcId": {
+                    "Ref": "VPCId"
+                },
+                "CidrBlock": {
+                    "Ref": "Public2Cidr"
+                },
+                "MapPublicIpOnLaunch": true,
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "Public2"
+                    }
+                ]
+            }
+        },
+        "PublicRoute": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPCId"
+                }
+            }
+        },
+        "PublicRoute1": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "PublicSubnet1"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRoute"
+                }
+            }
+        },
+        "PublicRoute2": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "PublicSubnet2"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicRoute"
+                }
+            }
+        },
+        "routeName": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PublicRoute"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            }
+        }
+    },
+    "Outputs": {
+        "PublicSubnet1": {
+            "Value": {
+                "Ref": "PublicSubnet1"
+            }
+        },
+        "PublicSubnet2": {
+            "Value": {
+                "Ref": "PublicSubnet2"
+            }
+        }
+    }
+}

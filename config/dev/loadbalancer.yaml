@@ -1,0 +1,4 @@
+template_path: loadbalancer.template
+parameters:
+    VPCId: 
+    - !stack_output dev/vpc.yaml::VPC

@@ -1,0 +1,200 @@
+{
+    "Parameters": {
+        "ECSCluster": {
+            "Type": "String"
+        },
+        "PrivateSubnet1": {
+            "Type": "String"
+        },
+        "PrivateSubnet2": {
+            "Type": "String"
+        },
+        "AMI": {
+            "Type": "String",
+            "Default": "ami-0231cd5b17565f0b1"
+        },
+        "ALBSecurityGroup": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "ECSAutoScalingGroup": {
+            "Type": "AWS::AutoScaling::AutoScalingGroup",
+            "Properties": {
+                "VPCZoneIdentifier": [
+                    {
+                        "Ref": "PrivateSubnet1"
+                    },
+                    {
+                        "Ref": "PrivateSubnet2"
+                    }
+                ],
+                "LaunchConfigurationName": {
+                    "Ref": "ECSLaunchConfiguration"
+                },
+                "MinSize": 1,
+                "MaxSize": 1,
+                "DesiredCapacity": 1
+            },
+            "CreationPolicy": {
+                "ResourceSignal": {
+                    "Timeout": "PT30M"
+                }
+            },
+            "UpdatePolicy": {
+                "AutoScalingReplacingUpdate": {
+                    "WillReplace": "true"
+                }
+            }
+        },
+        "ECSLaunchConfiguration": {
+            "Type": "AWS::AutoScaling::LaunchConfiguration",
+            "Properties": {
+                "AssociatePublicIpAddress": true,
+                "ImageId": {
+                    "Ref": "AMI"
+                },
+                "SecurityGroups": [
+                    {
+                        "Ref": "ALBSecurityGroup"
+                    }
+                ],
+                "InstanceType": "t2.small",
+                "IamInstanceProfile": {
+                    "Ref": "ECSInstanceProfile"
+                },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash -xe\n",
+                                "\necho nameserver 169.254.169.253 > /etc/resolv.conf",
+                                "\n/usr/bin/docker plugin install store/sumologic/docker-logging-driver:1.0.2 --alias sumologic --grant-all-permissions",
+                                {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "\necho 'ECS_AVAILABLE_LOGGING_DRIVERS=[",
+                                            "\"json-file\", ",
+                                            "\"awslogs\", ",
+                                            "\"sumologic\"]'",
+                                            " >>  /etc/ecs/ecs.config"
+                                        ]
+                                    ]
+                                },
+                                "\necho ECS_CLUSTER=",
+                                {
+                                    "Ref": "ECSCluster"
+                                },
+                                " >> /etc/ecs/ecs.config\n",
+                                "yum update -y\n",
+                                "yum install -y aws-cfn-bootstrap\n",
+                                "/opt/aws/bin/cfn-signal -e $? ",
+                                "         --stack ",
+                                {
+                                    "Ref": "AWS::StackName"
+                                },
+                                "         --resource ECSAutoScalingGroup ",
+                                "         --region ",
+                                {
+                                    "Ref": "AWS::Region"
+                                }
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        "ECSRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "Path": "/",
+                "AssumeRolePolicyDocument": {
+                    "Statement": [
+                        {
+                            "Action": "sts:AssumeRole",
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "ec2.amazonaws.com"
+                            }
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "ecs-service",
+                        "PolicyDocument": {
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "ecs:CreateCluster",
+                                        "ecs:DeregisterContainerInstance",
+                                        "ecs:DiscoverPollEndpoint",
+                                        "ecs:Poll",
+                                        "ecs:RegisterContainerInstance",
+                                        "ecs:StartTelemetrySession",
+                                        "ecs:Submit*",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents",
+                                        "ecr:BatchCheckLayerAvailability",
+                                        "ecr:BatchGetImage",
+                                        "ecr:GetDownloadUrlForLayer",
+                                        "ecr:GetAuthorizationToken",
+                                        "ssm:DescribeAssociation",
+                                        "ssm:GetDeployablePatchSnapshotForInstance",
+                                        "ssm:GetDocument",
+                                        "ssm:GetManifest",
+                                        "ssm:GetParameters",
+                                        "ssm:ListAssociations",
+                                        "ssm:ListInstanceAssociations",
+                                        "ssm:PutInventory",
+                                        "ssm:PutComplianceItems",
+                                        "ssm:PutConfigurePackageResult",
+                                        "ssm:UpdateAssociationStatus",
+                                        "ssm:UpdateInstanceAssociationStatus",
+                                        "ssm:UpdateInstanceInformation",
+                                        "ec2messages:AcknowledgeMessage",
+                                        "ec2messages:DeleteMessage",
+                                        "ec2messages:FailMessage",
+                                        "ec2messages:GetEndpoint",
+                                        "ec2messages:GetMessages",
+                                        "ec2messages:SendReply",
+                                        "cloudwatch:PutMetricData",
+                                        "ec2:DescribeInstanceStatus",
+                                        "ds:CreateComputer",
+                                        "ds:DescribeDirectories",
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:DescribeLogGroups",
+                                        "logs:DescribeLogStreams",
+                                        "logs:PutLogEvents",
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "s3:AbortMultipartUpload",
+                                        "s3:ListMultipartUploadParts",
+                                        "s3:ListBucket",
+                                        "s3:ListBucketMultipartUploads"
+                                    ],
+                                    "Resource": "*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "ECSInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                        "Ref": "ECSRole"
+                    }
+                ]
+            }
+        }
+    }
+}

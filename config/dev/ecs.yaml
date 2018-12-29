@@ -1,0 +1,7 @@
+template_path: ecs.template
+parameters:
+    ClusterName: sceptreDemo
+    VPCId: 
+    - !stack_output dev/vpc.yaml::VPC
+    SDname:
+        secptredemo.local

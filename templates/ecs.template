@@ -1,0 +1,40 @@
+{
+    "Parameters": {
+        "ClusterName": {
+            "Type": "String"
+        },
+        "VPCId": {
+            "Type": "String"
+        },
+        "SDname": {
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "Cluster": {
+            "Type": "AWS::ECS::Cluster",
+            "Properties": {
+                "ClusterName": {
+                    "Ref": "ClusterName"
+                }
+            }
+        },
+        "ServiceDiscovery": {
+            "Type": "AWS::ServiceDiscovery::PrivateDnsNamespace",
+            "Properties": {
+                "Vpc": {"Ref": "VPCId"},
+                "Name": {"Ref": "SDname"}
+            }
+        }
+    },
+    "Outputs": {
+        "Cluster": {
+            "Value": {
+                "Ref": "Cluster"
+            }
+        },
+        "ServiceDiscovery": {
+            "Value": {"Ref": "ServiceDiscovery"}
+        }
+    }
+}

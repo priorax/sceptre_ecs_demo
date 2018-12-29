@@ -1,0 +1,10 @@
+template_path: subnets.template
+parameters:
+  Public1Cidr: 10.1.0.0/25
+  Public2Cidr: 10.1.0.128/25
+  VPCId:
+    - !stack_output dev/vpc.yaml::VPC
+  InternetGateway:
+    - !stack_output dev/vpc.yaml::InternetGateway
+stack_tags:
+    projectCode: {{ stack_group_config.project_name }}
