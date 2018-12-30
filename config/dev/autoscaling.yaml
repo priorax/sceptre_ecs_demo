@@ -5,6 +5,6 @@ parameters:
     PrivateSubnet1:
       - !stack_output dev/subnets.yaml::PublicSubnet1
     PrivateSubnet2:
-      - !stack_output dev/subnets.yaml::PublicSubnet1
+      - !stack_output dev/subnets.yaml::PublicSubnet2
     ALBSecurityGroup:
       - !stack_output dev/loadbalancer.yaml::ALBSecurityGroup

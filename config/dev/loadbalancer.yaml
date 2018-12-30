@@ -1,5 +1,9 @@
 template_path: loadbalancer.py
-sceptre_user_data:
-    alb_name: sceptredemoalb
-    subnet1: !stack_output dev/subnets.yaml::PublicSubnet1
-    subnet2: !stack_output dev/subnets.yaml::PublicSubnet2
+parameters:
+    albname: sceptredemo
+    subnet1:
+        - !stack_output dev/subnets.yaml::PublicSubnet1
+    subnet2:
+        - !stack_output dev/subnets.yaml::PublicSubnet2
+    vpcid:
+        - !stack_output dev/vpc.yaml::VPC
