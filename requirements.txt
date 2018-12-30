@@ -1,5 +1,6 @@
 boto3==1.9.71
 botocore==1.12.71
+cfn-flip==1.1.0.post1
 click==6.7
 colorama==0.3.7
 decorator==4.3.0
@@ -15,4 +16,5 @@ PyYAML==3.13
 s3transfer==0.1.13
 sceptre==2.0.1
 six==1.11.0
+troposphere==2.3.4
 urllib3==1.24.1

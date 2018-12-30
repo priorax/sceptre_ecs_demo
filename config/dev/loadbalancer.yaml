@@ -1,4 +1,5 @@
-template_path: loadbalancer.template
-parameters:
-    VPCId: 
-    - !stack_output dev/vpc.yaml::VPC
+template_path: loadbalancer.py
+sceptre_user_data:
+    alb_name: sceptredemoalb
+    subnet1: !stack_output dev/subnets.yaml::PublicSubnet1
+    subnet2: !stack_output dev/subnets.yaml::PublicSubnet2
