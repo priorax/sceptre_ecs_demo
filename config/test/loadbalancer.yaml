@@ -1,6 +1,6 @@
 template_path: ec2/loadbalancer.py
 parameters:
-    albname: sceptredemo
+    albname: sceptredemotest
     subnet1:
         - !stack_output dev/subnets.yaml::PublicSubnet1
     subnet2:

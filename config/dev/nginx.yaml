@@ -1,4 +1,4 @@
-template_path: nginx.template
+template_path: ecs/tasks/nginx.template
 parameters:
   Cluster: 
     - !stack_output dev/ecs.yaml::Cluster

@@ -1,7 +1,7 @@
 template_path: ecs/ecs.template
 parameters:
-    ClusterName: sceptreDemo
+    ClusterName: sceptreTest
     VPCId: 
     - !stack_output dev/vpc.yaml::VPC
     SDname:
-        secptredemo.local
+        secptredemo.test.local

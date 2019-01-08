@@ -1,10 +1,10 @@
 template_path: ec2/autoscalinggroup.template
 parameters:
     ECSCluster:
-      - !stack_output dev/ecs.yaml::Cluster
+      - !stack_output test/ecs.yaml::Cluster
     PrivateSubnet1:
       - !stack_output dev/subnets.yaml::PublicSubnet1
     PrivateSubnet2:
       - !stack_output dev/subnets.yaml::PublicSubnet2
     ALBSecurityGroup:
-      - !stack_output dev/loadbalancer.yaml::ALBSecurityGroup
+      - !stack_output test/loadbalancer.yaml::ALBSecurityGroup

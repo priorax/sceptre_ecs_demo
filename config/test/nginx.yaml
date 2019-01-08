@@ -1,0 +1,6 @@
+template_path: ecs/tasks/nginx.template
+parameters:
+  Cluster: 
+    - !stack_output test/ecs.yaml::Cluster
+  NamespaceId:
+    - !stack_output test/ecs.yaml::ServiceDiscovery

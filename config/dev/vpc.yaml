@@ -1,4 +1,4 @@
-template_path: vpc.template
-parameters:
+template_path: network/vpc.py
+sceptre_user_data:
   CidrRange: 10.1.0.0/24
   VpcName: SpecDemo

@@ -71,4 +71,3 @@ class LoadBalancer(object):
 def sceptre_handler(sceptre_user_data):
     lb = LoadBalancer(sceptre_user_data)
     return lb.template.to_json()
-2
