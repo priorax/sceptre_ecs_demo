@@ -12,7 +12,7 @@ networkx==2.1
 packaging==16.8
 pyparsing==2.3.0
 python-dateutil==2.7.5
-PyYAML==3.13
+PyYAML==5.4
 s3transfer==0.1.13
 sceptre==2.0.1
 six==1.11.0
